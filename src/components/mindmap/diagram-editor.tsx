@@ -18,15 +18,20 @@ import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
+  SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
+import { NavUser } from "./nav-user";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 // Type for a diagram chat
 interface DiagramChat {
@@ -100,12 +105,25 @@ export default function DiagramWorkspace() {
     React.useState<DiagramChat | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [loading, setLoading] = React.useState(false)
 
   const onConnect = React.useCallback(
     (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   );
+  const { data: session, status } = useSession();
 
+  React.useEffect(() => {
+    if (status === "unauthenticated") {
+      redirect("/login");
+    } else if (status === "loading") {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [status])
+
+  // console.log(session, status)
   // Create new diagram
   const createNewDiagram = () => {
     const newDiagram: DiagramChat = {
@@ -132,7 +150,7 @@ export default function DiagramWorkspace() {
   return (
     <div className="flex h-screen w-full dark:bg-background">
       <SidebarProvider>
-        <Sidebar className="w-[300px] border-r">
+        <Sidebar className="w-[300px] border-r flex">
           <SidebarHeader>
             <Button
               variant="ghost"
@@ -145,24 +163,19 @@ export default function DiagramWorkspace() {
           </SidebarHeader>
           <SidebarContent>
             <ScrollArea className="h-[calc(100vh-4rem)]">
-              <SidebarMenu>
+              <SidebarMenu className="flex flex-col">
                 {diagrams.map((diagram) => (
                   <SidebarMenuItem key={diagram.id}>
                     <SidebarMenuButton
                       isActive={selectedDiagram?.id === diagram.id}
                       onClick={() => setSelectedDiagram(diagram)}
-                      className="w-full"
+                      className="w-full hover:bg-gray-300 h-full rounded-lg"
                     >
-                      <div className="flex w-full flex-col gap-0.5">
-                        <div className="flex items-center gap-2">
-                          <MessageSquare className="h-4 w-4" />
+                      <div className="flex w-full flex-col">
+                        <div className="flex items-center gap-2 text-primary">
+                          <MessageSquare className="h-4 w-6 " />
                           <span className="font-medium">{diagram.title}</span>
                         </div>
-                        <span className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(diagram.createdAt, {
-                            addSuffix: true,
-                          })}
-                        </span>
                       </div>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -170,6 +183,10 @@ export default function DiagramWorkspace() {
               </SidebarMenu>
             </ScrollArea>
           </SidebarContent>
+          <SidebarFooter>
+            <NavUser user={{ email: session?.user.email!, name: session?.user.name! }} />
+          </SidebarFooter>
+          <SidebarRail />
         </Sidebar>
 
         <main className="flex-1">

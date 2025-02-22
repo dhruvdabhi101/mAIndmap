@@ -194,7 +194,9 @@ const Index = () => {
               Join thousands of users who are already organizing their thoughts better with MindFlow AI.
             </p>
             <Button className="bg-accent hover:bg-accent/90 text-white text-lg px-8 py-6">
-              Get Started For Free
+              <Link href="/login">
+                Get Started For Free
+              </Link>
             </Button>
           </motion.div>
         </div>

@@ -13,7 +13,7 @@ type SignupRequestBody = {
 export async function POST(request: Request) {
   try {
     const body: SignupRequestBody = await request.json();
-    const { email, password, role, name } = body;
+    const { email, password, name } = body;
 
     if (!email || !password) {
       return NextResponse.json(
