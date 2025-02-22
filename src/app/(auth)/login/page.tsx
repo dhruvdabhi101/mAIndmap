@@ -8,28 +8,7 @@ import { Loader2, LoaderCircleIcon } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
 import { toast } from "sonner";
 import Link from "next/link";
-
-// Inline Google Icon Component
-const GoogleIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 48 48">
-        <path
-            fill="#EA4335"
-            d="M24 9.5c3.12 0 5.9 1.08 8.04 2.83l6-6C34.26 3.32 29.46 1 24 1 14.46 1 6.45 6.93 2.64 14.16l7.03 5.47C11.08 13.43 17.96 9.5 24 9.5z"
-        />
-        <path
-            fill="#FBBC05"
-            d="M46.56 24.45c0-1.5-.14-2.94-.41-4.33H24v8.18h12.67c-.55 3-2.21 5.57-4.67 7.28l7.36 5.7c4.3-3.97 6.77-9.83 6.77-17.83z"
-        />
-        <path
-            fill="#4285F4"
-            d="M24 47c6.48 0 11.92-2.14 15.89-5.82l-7.36-5.7c-2.04 1.37-4.64 2.17-8.53 2.17-6.54 0-12.08-4.4-14.06-10.29H2.64l-7.03 5.47C6.45 41.07 14.46 47 24 47z"
-        />
-        <path
-            fill="#34A853"
-            d="M9.94 28.91a14.99 14.99 0 0 1 0-9.82l-7.03-5.47C1.05 18.64 0 21.14 0 24c0 2.86 1.05 5.36 2.91 7.36l7.03-5.45z"
-        />
-    </svg>
-);
+import { FcGoogle } from "react-icons/fc";
 
 const LoginPage = () => {
     const router = useRouter();
@@ -146,7 +125,7 @@ const LoginPage = () => {
                         {googleLoading ? (
                             <Loader2 className="animate-spin h-5 w-5" />
                         ) : (
-                            <GoogleIcon />
+                          <FcGoogle size={10}/>
                         )}
                         <span>Sign in with Google</span>
                     </Button>
