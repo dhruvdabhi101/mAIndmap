@@ -1,0 +1,32 @@
+model User {
+  id        String   @id @default(cuid())
+  email     String?  @unique
+  name      String?
+  password  String?
+  mindMaps  MindMap[]
+  limit     Int      @default(3)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MindMap {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  nodes     Node[]
+}
+
+model Node {
+  id            String  @id @default(cuid())
+  content       String
+  explanation   String
+  parentId      String?
+  level         Int     @default(0)
+  mindMapId     String
+  mindMap       MindMap @relation(fields: [mindMapId], references: [id])
+  parent        Node?   @relation("NodeToNode", fields: [parentId], references: [id])
+  children      Node[]  @relation("NodeToNode")
+}

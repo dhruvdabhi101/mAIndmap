@@ -9,12 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^1.1.10",
+    "@prisma/client": "^6.4.1",
     "@radix-ui/react-slot": "^1.1.2",
+    "ai": "^4.1.45",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.4.7",
     "lucide-react": "^0.475.0",
     "next": "15.1.7",
+    "next-auth": "^4.24.11",
+    "openai": "^4.85.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "reactflow": "^11.11.4",
