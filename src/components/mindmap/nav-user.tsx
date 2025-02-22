@@ -71,16 +71,18 @@ export function NavUser({
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <BadgeCheck />
-                                <Link href="/forms/account">
+                            <Link href="/forms">
+                                <DropdownMenuItem>
+                                    <BadgeCheck />
                                     Account
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <CreditCard />
-                                Billing
-                            </DropdownMenuItem>
+                                </DropdownMenuItem>
+                            </Link>
+                            <Link href="/billing">
+                                <DropdownMenuItem>
+                                    <CreditCard />
+                                    Billing
+                                </DropdownMenuItem>
+                            </Link>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout}>

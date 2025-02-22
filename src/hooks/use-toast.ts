@@ -3,9 +3,11 @@
 // Inspired by react-hot-toast library
 import * as React from "react"
 
+
 import type {
   ToastActionElement,
   ToastProps,
+  //@ts-ignore
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
@@ -158,6 +160,7 @@ function toast({ ...props }: Toast) {
       ...props,
       id,
       open: true,
+      //@ts-ignore
       onOpenChange: (open) => {
         if (!open) dismiss()
       },

@@ -88,6 +88,7 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --radius: 0.5rem;
   }
 }
 
@@ -98,7 +99,27 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Subtle animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Enhanced focus styles */
+*:focus-visible {
+  @apply outline-none ring-2 ring-primary/20 ring-offset-2 ring-offset-background transition-all;
 }
 
 @layer base {
@@ -108,4 +129,40 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+}
+
+.status-badge {
+  @apply px-2 py-1 rounded-full text-sm font-medium;
+}
+
+.status-paid {
+  @apply bg-green-50 text-green-700;
+}
+
+.status-pending {
+  @apply bg-yellow-50 text-yellow-700;
+}
+
+.status-unpaid {
+  @apply bg-red-50 text-red-700;
+}
+
+.invoice-row {
+  @apply transition-all duration-200 hover:bg-gray-50;
+}
+
+.back-button {
+  @apply transition-transform duration-200 hover:scale-110 hover:text-gray-700;
+}
+
+.table-container {
+  @apply rounded-lg border border-gray-100 shadow-sm;
 }
