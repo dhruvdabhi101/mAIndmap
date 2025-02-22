@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
         data: {
           email,
           name,
-          username: email.split("@")[0],
         },
       });
     }
@@ -28,9 +27,7 @@ export async function POST(req: NextRequest) {
     const token = jwt.sign(
       {
         id: user.id,
-        username: user.username,
         email: user.email,
-        role: user.role,
       },
       SECRET_KEY,
       { expiresIn: "10d" } // Token expiration
