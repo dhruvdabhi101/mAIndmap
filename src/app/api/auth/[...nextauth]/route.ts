@@ -1,6 +1,4 @@
-// imports
 import NextAuth, { Session } from "next-auth";
-// importing providers
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -9,22 +7,20 @@ declare module "next-auth" {
     id: string;
     name: string;
     email: string;
-    // role: string;
     token: string;
   }
   interface Session {
     user: {
       id: string;
-      // username: string;
       name: string;
       email: string;
-      // role: string;
     };
     token: string;
   }
 }
 
 const handler = NextAuth({
+  secret: process.env.JWT_SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -33,37 +29,28 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (
-          credentials?.email === undefined ||
-          credentials?.password === undefined
-        ) {
+        if (!credentials?.email || !credentials?.password) {
           throw new Error("Please provide email and password");
         }
         try {
-          const response = await fetch(
-            `${process.env.APP_URL}/api/users/login`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(credentials),
-            }
-          );
+          const response = await fetch(`${process.env.APP_URL}/api/users/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(credentials),
+          });
           const data = await response.json();
           if (response.ok && data.data) {
-            const user = {
+            return {
               id: data.data.user.id,
-              // username: data.data.user.username,
               name: data.data.user.name,
-              email: credentials?.email,
+              email: credentials.email,
               token: data.data.token,
-              // role: data.data.user.role,
             };
-            return user;
           } else {
             throw new Error(data.message || "Something went wrong!");
           }
         } catch (error: any) {
-          console.log(error.message);
+          console.error("Authorization error:", error.message);
           throw new Error(error.message);
         }
       },
@@ -80,21 +67,25 @@ const handler = NextAuth({
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         const { email, name } = profile!;
-        const response = await fetch("/api/users/google", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, name }),
-        });
-        const data = await response.json();
-        if (response.ok && data.data) {
-          user.id = data.data.user.id;
-          // user.username = data.data.user.username;
-          user.name = data.data.user.name;
-          user.email = data.data.user.email;
-          user.token = data.data.token;
-          // user.role = data.data.user.role;
-          return true;
-        } else {
+        try {
+          const response = await fetch(`${process.env.APP_URL}/api/users/google`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, name }),
+          });
+          const data = await response.json();
+          if (response.ok && data.data) {
+            user.id = data.data.user.id;
+            user.name = data.data.user.name;
+            user.email = data.data.user.email;
+            user.token = data.data.token;
+            return true;
+          } else {
+            console.error("Google sign-in error:", data.message);
+            return false;
+          }
+        } catch (error: any) {
+          console.error("Google sign-in error:", error.message);
           return false;
         }
       }
@@ -104,30 +95,29 @@ const handler = NextAuth({
       if (user) {
         token.token = user.token;
         token.id = user.id;
-        // token.username = user.username;
         token.name = user.name;
         token.email = user.email;
-        // token.role = user.role;
       }
+      console.log("token",token)
       return token;
     },
     async session({ session, token }: any) {
       if (token) {
         session.user = {
           id: token.id,
-          // username: token.username,
           name: token.name ?? "",
           email: token.email,
-          // role: token.role,
         };
         session.token = token.token;
       }
+      console.log("session", session)
       return session;
     },
   },
   pages: {
     signIn: "/login",
   },
+  debug: process.env.NODE_ENV === "development", // Enable debugging in development
 });
 
 export { handler as GET, handler as POST };
