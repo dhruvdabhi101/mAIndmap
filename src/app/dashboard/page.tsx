@@ -1,8 +1,5 @@
-const Page = () => {
-  return (
-    <div>
-    </div>
-  )
-}
+import DiagramEditor from "@/components/mindmap/diagram-editor";
 
-export default Page;
+export default function Page() {
+  return <DiagramEditor />;
+}
