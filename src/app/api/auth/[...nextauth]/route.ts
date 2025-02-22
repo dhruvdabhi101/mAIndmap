@@ -20,7 +20,7 @@ declare module "next-auth" {
 }
 
 const handler = NextAuth({
-  secret: process.env.JWT_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -33,11 +33,14 @@ const handler = NextAuth({
           throw new Error("Please provide email and password");
         }
         try {
-          const response = await fetch(`${process.env.APP_URL}/api/users/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(credentials),
-          });
+          const response = await fetch(
+            `${process.env.APP_URL}/api/users/login`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(credentials),
+            }
+          );
           const data = await response.json();
           if (response.ok && data.data) {
             return {
@@ -68,11 +71,14 @@ const handler = NextAuth({
       if (account?.provider === "google") {
         const { email, name } = profile!;
         try {
-          const response = await fetch(`${process.env.APP_URL}/api/users/google`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, name }),
-          });
+          const response = await fetch(
+            `${process.env.APP_URL}/api/users/google`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, name }),
+            }
+          );
           const data = await response.json();
           if (response.ok && data.data) {
             user.id = data.data.user.id;
@@ -98,7 +104,7 @@ const handler = NextAuth({
         token.name = user.name;
         token.email = user.email;
       }
-      console.log("token",token)
+      console.log("token", token);
       return token;
     },
     async session({ session, token }: any) {
@@ -110,7 +116,7 @@ const handler = NextAuth({
         };
         session.token = token.token;
       }
-      console.log("session", session)
+      console.log("session", session);
       return session;
     },
   },
