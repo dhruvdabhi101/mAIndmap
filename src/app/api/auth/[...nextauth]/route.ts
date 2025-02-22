@@ -9,16 +9,16 @@ declare module "next-auth" {
     id: string;
     name: string;
     email: string;
-    role: string;
+    // role: string;
     token: string;
   }
   interface Session {
     user: {
       id: string;
-      username: string;
+      // username: string;
       name: string;
       email: string;
-      role: string;
+      // role: string;
     };
     token: string;
   }
@@ -52,11 +52,11 @@ const handler = NextAuth({
           if (response.ok && data.data) {
             const user = {
               id: data.data.user.id,
-              username: data.data.user.username,
+              // username: data.data.user.username,
               name: data.data.user.name,
               email: credentials?.email,
               token: data.data.token,
-              role: data.data.user.role,
+              // role: data.data.user.role,
             };
             return user;
           } else {
@@ -88,11 +88,11 @@ const handler = NextAuth({
         const data = await response.json();
         if (response.ok && data.data) {
           user.id = data.data.user.id;
-          user.username = data.data.user.username;
+          // user.username = data.data.user.username;
           user.name = data.data.user.name;
           user.email = data.data.user.email;
           user.token = data.data.token;
-          user.role = data.data.user.role;
+          // user.role = data.data.user.role;
           return true;
         } else {
           return false;
@@ -104,10 +104,10 @@ const handler = NextAuth({
       if (user) {
         token.token = user.token;
         token.id = user.id;
-        token.username = user.username;
+        // token.username = user.username;
         token.name = user.name;
         token.email = user.email;
-        token.role = user.role;
+        // token.role = user.role;
       }
       return token;
     },
@@ -115,10 +115,10 @@ const handler = NextAuth({
       if (token) {
         session.user = {
           id: token.id,
-          username: token.username,
+          // username: token.username,
           name: token.name ?? "",
           email: token.email,
-          role: token.role,
+          // role: token.role,
         };
         session.token = token.token;
       }
