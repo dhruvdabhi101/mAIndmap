@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Brain, Sparkles, Zap, Share2, Layout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Space_Grotesk } from "next/font/google";
+import Link from "next/link";
 
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'] })
 
@@ -21,7 +22,11 @@ const Index = () => {
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
               <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 transition-colors">How it works</a>
-              <Button className="bg-primary text-white hover:bg-primary/90">Get Started</Button>
+              <Button className="bg-primary text-white hover:bg-primary/90">
+                <Link href='/login'>
+                  Get Started
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
