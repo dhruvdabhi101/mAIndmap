@@ -1,36 +1,110 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion";
-import { Brain, Sparkles, Zap, Share2, Layout } from "lucide-react";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Brain, Sparkles, Share2, Layout, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Space_Grotesk } from "next/font/google";
 import Link from "next/link";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'] })
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 
 const Index = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Mobile menu slide-in variants for Framer Motion
+  const mobileMenuVariants = {
+    hidden: { x: "100%" },
+    visible: { x: 0 },
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Brain className="h-8 w-8 text-accent" />
-              <span className="text-xl font-semibold">m<span className="text-accent">AI</span>ndmap</span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
-              <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 transition-colors">How it works</a>
-              <Button className="bg-primary text-white hover:bg-primary/90">
-                <Link href='/login'>
-                  Get Started
-                </Link>
-              </Button>
-            </div>
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Brain className="h-8 w-8 text-accent" />
+            <span className="text-xl font-semibold">
+              m<span className="text-accent">AI</span>ndmap
+            </span>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            <a
+              href="#features"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Features
+            </a>
+            <a
+              href="#how-it-works"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              How it works
+            </a>
+            <Button className="bg-primary text-white hover:bg-primary/90">
+              <Link href="/login">Get Started</Link>
+            </Button>
+          </div>
+
+          {/* Mobile Hamburger Button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <Menu className="h-6 w-6 text-gray-700" />
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* Mobile Slide-In Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={mobileMenuVariants}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 bg-white p-6"
+          >
+            <div className="flex justify-end">
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <X className="h-6 w-6 text-gray-700" />
+              </button>
+            </div>
+            <nav className="mt-10 space-y-6">
+              <a
+                href="#features"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-lg"
+              >
+                Features
+              </a>
+              <a
+                href="#how-it-works"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-lg"
+              >
+                How it works
+              </a>
+              <Button
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full bg-primary text-white hover:bg-primary/90"
+              >
+                <Link href="/login">Get Started</Link>
+              </Button>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 relative overflow-hidden">
@@ -145,9 +219,21 @@ const Index = () => {
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2">
-                <li><a href="#features" className="text-gray-600 hover:text-gray-900 text-sm">Features</a></li>
-                <li><a href="#pricing" className="text-gray-600 hover:text-gray-900 text-sm">Pricing</a></li>
-                <li><a href="#how-it-works" className="text-gray-600 hover:text-gray-900 text-sm">How it works</a></li>
+                <li>
+                  <a href="#features" className="text-gray-600 hover:text-gray-900 text-sm">
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a href="#pricing" className="text-gray-600 hover:text-gray-900 text-sm">
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 text-sm">
+                    How it works
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -155,9 +241,21 @@ const Index = () => {
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2">
-                <li><a href="/about" className="text-gray-600 hover:text-gray-900 text-sm">About</a></li>
-                <li><a href="#contact" className="text-gray-600 hover:text-gray-900 text-sm">Contact</a></li>
-                <li><a href="/careers" className="text-gray-600 hover:text-gray-900 text-sm">Careers</a></li>
+                <li>
+                  <a href="/about" className="text-gray-600 hover:text-gray-900 text-sm">
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a href="#contact" className="text-gray-600 hover:text-gray-900 text-sm">
+                    Contact
+                  </a>
+                </li>
+                <li>
+                  <a href="/careers" className="text-gray-600 hover:text-gray-900 text-sm">
+                    Careers
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -165,9 +263,21 @@ const Index = () => {
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2">
-                <li><a href="/privacy-policy" className="text-gray-600 hover:text-gray-900 text-sm">Privacy Policy</a></li>
-                <li><a href="/tos" className="text-gray-600 hover:text-gray-900 text-sm">Terms of Service</a></li>
-                <li><a href="/refund-policy" className="text-gray-600 hover:text-gray-900 text-sm">Refund Policy</a></li>
+                <li>
+                  <a href="/privacy-policy" className="text-gray-600 hover:text-gray-900 text-sm">
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="/tos" className="text-gray-600 hover:text-gray-900 text-sm">
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a href="/refund-policy" className="text-gray-600 hover:text-gray-900 text-sm">
+                    Refund Policy
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -197,20 +307,22 @@ const Index = () => {
 const features = [
   {
     title: "AI-Powered Generation",
-    description: "Transform your ideas into structured mind maps with just a few clicks using advanced AI.",
+    description:
+      "Transform your ideas into structured mind maps with just a few clicks using advanced AI.",
     icon: <Sparkles className="w-6 h-6 text-accent" />,
   },
   {
     title: "Real-time Collaboration",
-    description: "Work together with your team in real-time, sharing ideas and building upon each other's thoughts.",
+    description:
+      "Work together with your team in real-time, sharing ideas and building upon each other's thoughts.",
     icon: <Share2 className="w-6 h-6 text-accent" />,
   },
   {
     title: "Smart Layouts",
-    description: "Choose from multiple intelligent layout options that automatically organize your mind maps.",
+    description:
+      "Choose from multiple intelligent layout options that automatically organize your mind maps.",
     icon: <Layout className="w-6 h-6 text-accent" />,
   },
 ];
 
 export default Index;
-
