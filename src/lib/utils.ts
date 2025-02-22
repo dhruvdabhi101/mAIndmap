@@ -128,17 +128,8 @@ export const createEdgesFromNodes = (nodes: any): Edge[] => {
       id: `${centerNode.id}-${node.id}`,
       source: centerNode.id,
       target: node.id,
-      type: "smoothstep",
+      // type: "smoothstep",
       animated: true,
-      style: {
-        strokeWidth: 2,
-        stroke: "#666",
-      },
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-      },
     });
   });
 
@@ -150,17 +141,8 @@ export const createEdgesFromNodes = (nodes: any): Edge[] => {
         id: `${node.parentId}-${node.id}`,
         source: node.parentId,
         target: node.id,
-        type: "smoothstep",
+        // type: "smoothstep",
         animated: true,
-        style: {
-          strokeWidth: 2,
-          stroke: "#666",
-        },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 20,
-          height: 20,
-        },
       });
     }
   });

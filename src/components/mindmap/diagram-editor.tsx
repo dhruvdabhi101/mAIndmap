@@ -13,6 +13,7 @@ import ReactFlow, {
   Connection,
   MarkerType,
   Position,
+  Handle,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
@@ -64,6 +65,10 @@ function MindMapNode({ data, id }: { data: any; id: string }) {
 
   return (
     <>
+      <Handle
+        type={data.level === 0 ? "source" : "target"}
+        position={Position.Top}
+      />
       <div
         className="rounded-lg border bg-card p-4 shadow-sm cursor-pointer hover:bg-accent"
         onClick={() => setShowExplanation(true)}
@@ -97,6 +102,7 @@ function MindMapNode({ data, id }: { data: any; id: string }) {
           </DialogClose>
         </DialogContent>
       </Dialog>
+      <Handle type="source" position={Position.Bottom} />
     </>
   );
 }
@@ -174,7 +180,8 @@ export default function DiagramWorkspace() {
               data: {
                 label: node.content,
                 explanation: node.explanation,
-                canExpand: true,
+                canExpand: node.level === 0 ? false : true,
+                parentId: node.parentId,
                 onExpand: () => expandNode(mindMap.title, [], node),
               },
             })),
@@ -290,6 +297,7 @@ export default function DiagramWorkspace() {
 
       // Position new nodes in a semicircle below the parent node
       const parentNode = nodes.find((n) => n.id === currentNode.id)!;
+      console.log(parentNode);
       const newNodes: Node[] = data.nodes.map((node: any, index: number) => {
         const angle = (Math.PI * (index + 1)) / (data.nodes.length + 1);
         const radius = 200;
@@ -443,7 +451,7 @@ export default function DiagramWorkspace() {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
-                // nodeTypes={nodeTypes}
+                nodeTypes={nodeTypes}
                 fitView
               >
                 <Background />
