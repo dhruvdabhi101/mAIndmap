@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postinstall": "npx prisma generate",
+    "postinstall": "npx prisma generate && npx prisma migrate dev",
     "start": "next start",
     "lint": "next lint",
     "db:migrate": "npx prisma migrate dev",
