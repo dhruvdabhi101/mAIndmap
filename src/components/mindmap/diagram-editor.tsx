@@ -44,6 +44,7 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { NavUser } from "./nav-user";
 import { calculateNodePosition, createEdgesFromNodes } from "@/lib/utils";
+import { LoadingSpinner } from "../ui/loading-spinner";
 
 // Custom Node Types
 const nodeTypes = {
@@ -128,7 +129,7 @@ export default function DiagramWorkspace() {
     React.useState<DiagramChat | null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [newTopicDialog, setNewTopicDialog] = React.useState(false);
   const [newTopic, setNewTopic] = React.useState("");
 
@@ -171,12 +172,12 @@ export default function DiagramWorkspace() {
                 node.level === 0
                   ? { x: 0, y: 0 }
                   : calculateNodePosition(
-                      idx,
-                      mindMap.nodes.length - 1,
-                      0,
-                      0,
-                      200
-                    ), // You'll need to store/calculate positions
+                    idx,
+                    mindMap.nodes.length - 1,
+                    0,
+                    0,
+                    200
+                  ), // You'll need to store/calculate positions
               data: {
                 label: node.content,
                 explanation: node.explanation,
@@ -355,6 +356,10 @@ export default function DiagramWorkspace() {
       setEdges(selectedDiagram.edges);
     }
   }, [selectedDiagram]);
+
+  if (loading) {
+    return <LoadingSpinner />
+  }
 
   return (
     <div className="flex h-screen w-full dark:bg-background">

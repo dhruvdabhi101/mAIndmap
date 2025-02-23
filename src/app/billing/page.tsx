@@ -13,6 +13,8 @@ import { ArrowLeft, CreditCard, Wallet2, Building2 } from "lucide-react";
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import React from "react";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 const invoices = [
     {
@@ -83,6 +85,11 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 function BillingPage() {
+    const [loading, setLoading] = React.useState(false);
+
+    if (loading) {
+        return <LoadingSpinner />
+    }
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
