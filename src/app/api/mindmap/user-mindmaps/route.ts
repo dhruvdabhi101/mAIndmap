@@ -11,11 +11,16 @@ export async function GET(req: NextRequest) {
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
+      },
+    });
 
     // Fetch all mindmaps for the user
     const mindMaps = await prisma.mindMap.findMany({
       where: {
-        userId: session.user.id,
+        userId: user?.id,
       },
       include: {
         nodes: true,
