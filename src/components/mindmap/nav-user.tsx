@@ -77,12 +77,12 @@ export function NavUser({
                   Account
                 </DropdownMenuItem>
               </Link>
-              {/* <Link href="/billing">
-                                <DropdownMenuItem>
-                                    <CreditCard />
-                                    Billing
-                                </DropdownMenuItem>
-                            </Link> */}
+              <Link href="/billing/form">
+                <DropdownMenuItem>
+                  <CreditCard />
+                  Get More Mindmaps
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
