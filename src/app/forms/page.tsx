@@ -5,13 +5,32 @@ import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
 import { AccountForm } from "./account-form";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import React from "react";
+import { redirect } from "next/navigation";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
-const SettingsAccountPage = () => {
-    // Mock user data (in a real app, this would come from your auth system)
-    const user = {
-        name: "John Doe",
-        email: "john@example.com"
-    };
+export function SettingsAccountPage() {
+
+    const [loading, setLoading] = React.useState(true);
+    const { data: session, status } = useSession();
+
+    React.useEffect(() => {
+        if (status === "authenticated") {
+            setLoading(false);
+            console.log("User is authenticated:", session);
+        } else if (status === "unauthenticated") {
+            setLoading(false);
+            redirect("/login");
+        } else {
+            setLoading(true);
+            console.log("Loading...");
+        }
+    }, [status]);
+
+    if (loading) {
+        return <LoadingSpinner />
+    }
 
     return (
         <motion.div
@@ -47,7 +66,7 @@ const SettingsAccountPage = () => {
 
                     <Separator className="my-6" />
 
-                    <AccountForm user={user} />
+                    <AccountForm user={{ email: session?.user.email!, name: session?.user.name! }} />
                 </motion.div>
             </div>
         </motion.div>
