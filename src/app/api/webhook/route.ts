@@ -4,7 +4,7 @@ import { dodopayments } from "@/lib/dodopayments";
 import prisma from "@/lib/prisma";
 
 // const webhook = new Webhook("whsec_tRx4aH09lCwuw4ueiMhTJu73");
-const webhook = new Webhook("whsec_tRx4aH09lCwuw4ueiMhTJu73"); // Replace with your secret key generated from the Dodo Payments Dashboard
+const webhook = new Webhook(process.env.DODO_PAYMENTS_WEBHOOK_KEY!); // Replace with your secret key generated from the Dodo Payments Dashboard
 
 export async function POST(request: Request) {
   const headersList = await headers();
