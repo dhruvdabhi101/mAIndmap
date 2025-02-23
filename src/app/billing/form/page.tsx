@@ -205,7 +205,7 @@ export default function BillingForm() {
               className="max-w-[100px]"
             />
             <p className="text-sm text-muted-foreground">
-              Each quantity adds 5 mindmaps to your account
+              Each quantity adds 20 mindmaps to your account
             </p>
           </div>
         </CardContent>
