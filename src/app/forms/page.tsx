@@ -10,7 +10,7 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
-export function SettingsAccountPage() {
+export default function AccountPage() {
 
     const [loading, setLoading] = React.useState(true);
     const { data: session, status } = useSession();
@@ -73,4 +73,4 @@ export function SettingsAccountPage() {
     );
 };
 
-export default SettingsAccountPage;
+// export default AccountPage;
