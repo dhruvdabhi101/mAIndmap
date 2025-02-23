@@ -15,8 +15,9 @@ export async function createPaymentLink(formData: FormData) {
       return { error: "Please check your billing information and try again." };
     }
 
+    // change product id if needed
     const response = await fetch(
-      "/api/checkout?productId=pdt_eUrsOnnXPI904PSbuB4FX",
+      "/api/checkout?productId=pdt_WSFV4ePTzIxD4FWanDwTL",
       {
         method: "POST",
         headers: {

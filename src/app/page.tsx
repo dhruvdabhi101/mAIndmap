@@ -112,7 +112,9 @@ const Index = () => {
         <div className="absolute left-1/2 top-0 -z-10 h-[800px] w-[800px] rounded-full bg-accent/20 opacity-20 blur-[100px]" />
 
         <div className="container mx-auto px-6">
-          <div className={`text-center max-w-4xl mx-auto relative ${spaceGrotesk.className}`}>
+          <div
+            className={`text-center max-w-4xl mx-auto relative ${spaceGrotesk.className}`}
+          >
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -126,7 +128,8 @@ const Index = () => {
                 Transform Your Ideas Into Beautiful Mind Maps
               </h1>
               <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-                Harness the power of AI to create stunning, interconnected mind maps that bring your thoughts to life.
+                Harness the power of AI to create stunning, interconnected mind
+                maps that bring your thoughts to life.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button className="bg-primary text-white hover:bg-primary/90 text-lg px-8 py-6">
@@ -138,6 +141,25 @@ const Index = () => {
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="relative rounded-2xl shadow-2xl shadow-gray-200/50 overflow-hidden"
+          >
+            <div className="absolute inset-0 pointer-events-none"></div>
+            <img
+              src="/demo.png"
+              alt="MindFlow AI Dashboard"
+              className="w-full rounded-2xl border border-gray-200"
+            />
+          </motion.div>
         </div>
       </section>
 
@@ -154,7 +176,9 @@ const Index = () => {
             >
               Powerful Features
             </motion.h2>
-            <p className="text-gray-600 text-lg">Everything you need to organize your thoughts effectively</p>
+            <p className="text-gray-600 text-lg">
+              Everything you need to organize your thoughts effectively
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -189,14 +213,15 @@ const Index = () => {
             transition={{ duration: 0.5 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h2 className="text-4xl font-bold mb-6">Ready to Transform Your Thinking?</h2>
+            <h2 className="text-4xl font-bold mb-6">
+              Ready to Transform Your Thinking?
+            </h2>
             <p className="text-xl text-gray-600 mb-10">
-              Join thousands of users who are already organizing their thoughts better with MindFlow AI.
+              Join thousands of users who are already organizing their thoughts
+              better with MindFlow AI.
             </p>
             <Button className="bg-accent hover:bg-accent/90 text-white text-lg px-8 py-6">
-              <Link href="/login">
-                Get Started For Free
-              </Link>
+              <Link href="/login">Get Started For Free</Link>
             </Button>
           </motion.div>
         </div>
@@ -213,7 +238,8 @@ const Index = () => {
                 <span className="text-lg font-semibold">MindFlow AI</span>
               </div>
               <p className="text-gray-600 text-sm">
-                Transform your thoughts into beautiful mind maps with the power of AI.
+                Transform your thoughts into beautiful mind maps with the power
+                of AI.
               </p>
             </div>
 
@@ -222,17 +248,26 @@ const Index = () => {
               <h4 className="font-semibold mb-4">Product</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#features" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a
+                    href="#features"
+                    className="text-gray-600 hover:text-gray-900 text-sm"
+                  >
                     Features
                   </a>
                 </li>
                 <li>
-                  <a href="#pricing" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a
+                    href="#pricing"
+                    className="text-gray-600 hover:text-gray-900 text-sm"
+                  >
                     Pricing
                   </a>
                 </li>
                 <li>
-                  <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a
+                    href="#how-it-works"
+                    className="text-gray-600 hover:text-gray-900 text-sm"
+                  >
                     How it works
                   </a>
                 </li>
@@ -244,17 +279,26 @@ const Index = () => {
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="/about" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a
+                    href="/about"
+                    className="text-gray-600 hover:text-gray-900 text-sm"
+                  >
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#contact" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a
+                    href="#contact"
+                    className="text-gray-600 hover:text-gray-900 text-sm"
+                  >
                     Contact
                   </a>
                 </li>
                 <li>
-                  <a href="/careers" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a
+                    href="/careers"
+                    className="text-gray-600 hover:text-gray-900 text-sm"
+                  >
                     Careers
                   </a>
                 </li>
@@ -266,17 +310,26 @@ const Index = () => {
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="/privacy-policy" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a
+                    href="/privacy-policy"
+                    className="text-gray-600 hover:text-gray-900 text-sm"
+                  >
                     Privacy Policy
                   </a>
                 </li>
                 <li>
-                  <a href="/tos" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a
+                    href="/tos"
+                    className="text-gray-600 hover:text-gray-900 text-sm"
+                  >
                     Terms of Service
                   </a>
                 </li>
                 <li>
-                  <a href="/refund-policy" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a
+                    href="/refund-policy"
+                    className="text-gray-600 hover:text-gray-900 text-sm"
+                  >
                     Refund Policy
                   </a>
                 </li>

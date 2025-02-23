@@ -124,7 +124,7 @@ export default function BillingForm() {
                   <SelectItem
                     key={country.code}
                     value={country.code}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 z-50 bg-white"
                   >
                     <span className="mr-2">{country.flag}</span>
                     {country.name}
