@@ -1,6 +1,8 @@
+//@ts-nocheck
 "use client";
 
-import * as React from "react";
+import React from "react";
+import { useEffect, useState, useRef } from "react";
 import { Bot, Plus, MessageSquare, Loader2 } from "lucide-react";
 import ReactFlow, {
   Background,
@@ -45,6 +47,8 @@ import { redirect } from "next/navigation";
 import { NavUser } from "./nav-user";
 import { calculateNodePosition, createEdgesFromNodes } from "@/lib/utils";
 import { LoadingSpinner } from "../ui/loading-spinner";
+import { cn } from "@/lib/utils";
+import { MindMapNode } from "./mindmap-node";
 
 // Custom Node Types
 const nodeTypes = {
@@ -59,54 +63,7 @@ const defaultEdgeOptions = {
     strokeWidth: 2,
   },
 };
-
-// MindMap Node Component
-function MindMapNode({ data, id }: { data: any; id: string }) {
-  const [showExplanation, setShowExplanation] = React.useState(false);
-
-  return (
-    <>
-      <Handle
-        type={data.level === 0 ? "source" : "target"}
-        position={Position.Top}
-      />
-      <div
-        className="rounded-lg border bg-card p-4 shadow-sm cursor-pointer hover:bg-accent"
-        onClick={() => setShowExplanation(true)}
-      >
-        <div className="text-sm font-medium">{data.label}</div>
-        {data.canExpand && (
-          <Button
-            size="sm"
-            variant="ghost"
-            className="mt-2"
-            onClick={(e) => {
-              e.stopPropagation();
-              data.onExpand();
-            }}
-          >
-            Expand
-          </Button>
-        )}
-      </div>
-
-      <Dialog open={showExplanation} onOpenChange={setShowExplanation}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>{data.label}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="prose dark:prose-invert">{data.explanation}</div>
-          </div>
-          <DialogClose asChild>
-            <Button className="mt-4">Close</Button>
-          </DialogClose>
-        </DialogContent>
-      </Dialog>
-      <Handle type="source" position={Position.Bottom} />
-    </>
-  );
-}
+const nodeColor = ["#FFCC00", "#FF9900", "#FF6600", "#FF3300", "#FF0000"];
 
 // Types
 interface DiagramChat {
@@ -132,6 +89,8 @@ export default function DiagramWorkspace() {
   const [loading, setLoading] = React.useState(true);
   const [newTopicDialog, setNewTopicDialog] = React.useState(false);
   const [newTopic, setNewTopic] = React.useState("");
+  const diagramsRef = React.useRef(diagrams);
+  const selectedDiagramRef = React.useRef(selectedDiagram);
 
   const { data: session, status } = useSession();
 
@@ -172,17 +131,17 @@ export default function DiagramWorkspace() {
                 node.level === 0
                   ? { x: 0, y: 0 }
                   : calculateNodePosition(
-                    idx,
-                    mindMap.nodes.length - 1,
-                    0,
-                    0,
-                    200
-                  ), // You'll need to store/calculate positions
+                      idx,
+                      mindMap.nodes.filter((n) => n.level === node.level)
+                        .length,
+                      0,
+                      node.level * 150
+                    ),
               data: {
                 label: node.content,
                 explanation: node.explanation,
                 canExpand: node.level === 0 ? false : true,
-                parentId: node.parentId,
+                level: node.level,
                 onExpand: () => expandNode(mindMap.title, [], node),
               },
             })),
@@ -204,6 +163,14 @@ export default function DiagramWorkspace() {
     }
   }, [status]);
 
+  React.useEffect(() => {
+    diagramsRef.current = diagrams;
+  }, [diagrams]);
+
+  React.useEffect(() => {
+    selectedDiagramRef.current = selectedDiagram;
+  }, [selectedDiagram]);
+
   const generateMindMap = async (topic: string) => {
     setLoading(true);
     try {
@@ -219,18 +186,21 @@ export default function DiagramWorkspace() {
       console.log(data);
 
       // Create center node for main topic
-      const centerNode: Node = {
+      const centerNode = {
         id: "center",
         type: "mindMapNode",
         position: { x: 0, y: 0 },
         data: {
           label: topic,
           explanation: "Main topic",
+          level: 0,
+          canExpand: true,
+          onExpand: () => expandNode(topic, [], centerNode),
         },
       };
 
       // Position child nodes in a circle around the center
-      const childNodes: Node[] = data.nodes.map((node: any, index: number) => {
+      const childNodes = data.nodes.map((node: any, index: number) => {
         const angle = (2 * Math.PI * index) / data.nodes.length;
         const radius = 300;
         return {
@@ -243,31 +213,36 @@ export default function DiagramWorkspace() {
           data: {
             label: node.content,
             explanation: node.explanation,
+            level: 1,
             canExpand: true,
             onExpand: () => expandNode(topic, [centerNode], node),
           },
         };
       });
 
-      // Create edges from center to child nodes
-      const newEdges: Edge[] = childNodes.map((node) => ({
-        id: `center-${node.id}`,
-        source: "center",
-        target: node.id,
-      }));
+      const allNodes = [centerNode, ...childNodes];
+      const newEdges = createEdgesFromNodes(
+        allNodes.map((node) => ({
+          id: node.id,
+          content: node.data.label,
+          explanation: node.data.explanation,
+          level: node.data.level,
+          parentId: node.data.level === 0 ? null : "center",
+        }))
+      );
 
-      const newDiagram: DiagramChat = {
+      const newDiagram = {
         id: `diagram-${Date.now()}`,
         title: topic,
         createdAt: new Date(),
-        nodes: [centerNode, ...childNodes],
+        nodes: allNodes,
         edges: newEdges,
         mainTopic: topic,
       };
 
       setDiagrams([newDiagram, ...diagrams]);
       setSelectedDiagram(newDiagram);
-      setNodes([centerNode, ...childNodes]);
+      setNodes(allNodes);
       setEdges(newEdges);
       setNewTopicDialog(false);
       setNewTopic("");
@@ -284,24 +259,48 @@ export default function DiagramWorkspace() {
     nodePath: Node[],
     currentNode: Node
   ) => {
-    setLoading(true);
+    console.log("Expanding node:", currentNode);
     try {
+      const currentDiagram = diagramsRef.current.find(
+        (d) => d.mainTopic === mainTopic
+      );
+
+      if (!currentDiagram) {
+        console.error("Current diagram not found");
+        return;
+      }
+
+      const parentNode = currentDiagram.nodes.find(
+        (n) => n.id === currentNode.id
+      );
+
+      if (!parentNode) {
+        console.error("Parent node not found");
+        return;
+      }
+
+      setLoading(true);
+
       const response = await fetch("/api/mindmap/expand", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ mainTopic, nodePath, currentNode }),
+        body: JSON.stringify({
+          mainTopic,
+          nodePath: [...nodePath, currentNode],
+          currentNode,
+        }),
       });
 
       const data = await response.json();
 
-      // Position new nodes in a semicircle below the parent node
-      const parentNode = nodes.find((n) => n.id === currentNode.id)!;
-      console.log(parentNode);
-      const newNodes: Node[] = data.nodes.map((node: any, index: number) => {
+      // Calculate positions for new nodes in a semicircle
+      const newNodes = data.nodes.map((node: any, index: number) => {
         const angle = (Math.PI * (index + 1)) / (data.nodes.length + 1);
         const radius = 200;
+        const newLevel = (currentNode.level || 0) + 1;
+
         return {
           id: node.id,
           type: "mindMapNode",
@@ -312,33 +311,45 @@ export default function DiagramWorkspace() {
           data: {
             label: node.content,
             explanation: node.explanation,
+            level: newLevel,
             canExpand: true,
             onExpand: () =>
-              expandNode(mainTopic, [...nodePath, parentNode], node),
+              expandNode(mainTopic, [...nodePath, currentNode], node),
           },
         };
       });
 
-      // Create edges from parent to new nodes
-      const newEdges: Edge[] = newNodes.map((node) => ({
-        id: `${currentNode.id}-${node.id}`,
-        source: currentNode.id,
-        target: node.id,
-      }));
+      if (selectedDiagramRef.current) {
+        const updatedNodes = [...selectedDiagramRef.current.nodes, ...newNodes];
 
-      setNodes([...nodes, ...newNodes]);
-      setEdges([...edges, ...newEdges]);
+        // Convert nodes to the format expected by createEdgesFromNodes
+        const nodesForEdges = updatedNodes.map((node) => ({
+          id: node.id,
+          content: node.data.label,
+          explanation: node.data.explanation,
+          level: node.data.level,
+          parentId:
+            node.data.level === 0
+              ? null
+              : node.data.level === 1
+              ? "center"
+              : currentNode.id,
+        }));
 
-      // Update the current diagram
-      if (selectedDiagram) {
+        const updatedEdges = createEdgesFromNodes(nodesForEdges);
+
+        setNodes(updatedNodes);
+        setEdges(updatedEdges);
+
         const updatedDiagram = {
-          ...selectedDiagram,
-          nodes: [...nodes, ...newNodes],
-          edges: [...edges, ...newEdges],
+          ...selectedDiagramRef.current,
+          nodes: updatedNodes,
+          edges: updatedEdges,
         };
+
         setDiagrams(
-          diagrams.map((d) =>
-            d.id === selectedDiagram.id ? updatedDiagram : d
+          diagramsRef.current.map((d) =>
+            d.id === selectedDiagramRef.current?.id ? updatedDiagram : d
           )
         );
         setSelectedDiagram(updatedDiagram);
@@ -350,15 +361,8 @@ export default function DiagramWorkspace() {
     }
   };
 
-  React.useEffect(() => {
-    if (selectedDiagram) {
-      setNodes(selectedDiagram.nodes);
-      setEdges(selectedDiagram.edges);
-    }
-  }, [selectedDiagram]);
-
   if (loading) {
-    return <LoadingSpinner />
+    return <LoadingSpinner />;
   }
 
   return (
@@ -409,7 +413,11 @@ export default function DiagramWorkspace() {
                   <SidebarMenuItem key={diagram.id}>
                     <SidebarMenuButton
                       isActive={selectedDiagram?.id === diagram.id}
-                      onClick={() => setSelectedDiagram(diagram)}
+                      onClick={() => {
+                        setNodes(diagram.nodes);
+                        setEdges(diagram.edges);
+                        setSelectedDiagram(diagram);
+                      }}
                       className="w-full hover:bg-gray-300 h-full rounded-lg"
                     >
                       <div className="flex w-full flex-col">

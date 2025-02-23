@@ -12,12 +12,14 @@ export function calculateNodePosition(
   total: number,
   centerX: number,
   centerY: number,
-  radius: number
+  levelSpacing: number = 150
 ) {
-  const angle = (2 * Math.PI * index) / total - Math.PI / 2; // Start from top (-Math.PI/2)
+  const horizontalSpacing = 200; // Space between siblings
+  const startX = centerX - ((total - 1) * horizontalSpacing) / 2;
+
   return {
-    x: centerX + radius * Math.cos(angle),
-    y: centerY + radius * Math.sin(angle),
+    x: startX + index * horizontalSpacing,
+    y: centerY + levelSpacing,
   };
 }
 
@@ -26,17 +28,14 @@ export function calculateSubNodePosition(
   parentY: number,
   index: number,
   total: number,
-  radius: number,
-  spreadAngle = Math.PI // 180 degrees spread
+  levelSpacing: number = 150
 ) {
-  // Calculate the starting angle (to center the spread)
-  const startAngle = -spreadAngle / 2;
-  // Calculate angle for this node
-  const angle = startAngle + (spreadAngle * (index + 1)) / (total + 1);
+  const horizontalSpacing = 200; // Space between siblings
+  const startX = parentX - ((total - 1) * horizontalSpacing) / 2;
 
   return {
-    x: parentX + radius * Math.cos(angle),
-    y: parentY + radius * Math.sin(angle),
+    x: startX + index * horizontalSpacing,
+    y: parentY + levelSpacing,
   };
 }
 

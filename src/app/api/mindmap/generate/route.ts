@@ -26,8 +26,45 @@ type SubtopicResponse = {
 
 export async function POST(req: NextRequest) {
   try {
-    // Get the user's token from the request
     const session = await getServerSession();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    console.log("session", session.user.id);
+
+    // Check user's mindmap limit
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
+      },
+      select: {
+        email: true,
+        limit: true,
+        id: true,
+        _count: {
+          select: {
+            mindMaps: true,
+          },
+        },
+      },
+    });
+    console.log("user", user);
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (user._count.mindMaps >= user.limit) {
+      return NextResponse.json(
+        {
+          error:
+            "You have reached your mindmap limit. Please upgrade to create more.",
+        },
+        { status: 403 }
+      );
+    }
 
     const { topic } = await req.json();
 
@@ -37,7 +74,7 @@ export async function POST(req: NextRequest) {
       1. A concise title (max 5 words)
       2. A brief explanation (2-3 sentences)
       Format the response as a JSON array of objects with properties: "title", "explanation"
-      Make sure the output is valid JSON.
+      Make sure the output is valid JSON and strictly in english.
     `;
 
     const completion = await openai.chat.completions.create({
@@ -65,7 +102,7 @@ export async function POST(req: NextRequest) {
     const mindMap = await prisma.mindMap.create({
       data: {
         title: topic,
-        userId: session?.user.id as string,
+        userId: user.id as string,
       },
     });
     const parentNode = await prisma.node.create({
@@ -77,6 +114,8 @@ export async function POST(req: NextRequest) {
         mindMapId: mindMap.id,
       },
     });
+    console.log("parentNode", parentNode);
+    console.log("subtopics", subtopics);
 
     // Create nodes in the database
     const dbNodes = await Promise.all(

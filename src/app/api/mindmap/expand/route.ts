@@ -1,5 +1,6 @@
 import { OpenAI } from "openai";
 import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
 const openai = new OpenAI({
   apiKey: process.env.GROQ_API_KEY,
@@ -60,14 +61,29 @@ export async function POST(req: Request) {
 
     const subtopics: { subtopics: SubtopicResponse[] } = JSON.parse(content);
 
-    // Convert to Node objects
-    const nodes: Node[] = subtopics.subtopics.map((subtopic, index) => ({
-      id: `node-${Date.now()}-${index}`,
-      content: subtopic.title,
-      explanation: `${subtopic.explanation} ${subtopic.importance}`,
-      level: currentNode.level + 1,
-      parentId: currentNode.id,
-      mindMapId: currentNode.mindMapId,
+    // Create nodes in the database and get their IDs
+    const dbNodes = await Promise.all(
+      subtopics.subtopics.map((subtopic) =>
+        prisma.node.create({
+          data: {
+            content: subtopic.title,
+            explanation: `${subtopic.explanation} ${subtopic.importance}`,
+            level: currentNode.level + 1,
+            parentId: currentNode.id,
+            mindMapId: currentNode.mindMapId,
+          },
+        })
+      )
+    );
+
+    // Convert database nodes to Node objects for the frontend
+    const nodes: Node[] = dbNodes.map((node) => ({
+      id: node.id,
+      content: node.content,
+      explanation: node.explanation,
+      level: node.level,
+      parentId: node.parentId,
+      mindMapId: node.mindMapId,
     }));
 
     return NextResponse.json({ nodes });

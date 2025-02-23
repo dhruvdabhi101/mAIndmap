@@ -104,7 +104,6 @@ const handler = NextAuth({
         token.name = user.name;
         token.email = user.email;
       }
-      console.log("token", token);
       return token;
     },
     async session({ session, token }: any) {
@@ -116,7 +115,6 @@ const handler = NextAuth({
         };
         session.token = token.token;
       }
-      console.log("session", session);
       return session;
     },
   },
