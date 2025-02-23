@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "mANndmap",
+  title: "mAIndmap",
   description: "AI Generate mindmaps for your studies",
 };
 
